@@ -13,15 +13,15 @@ const SlotSymbols = [
 
 export function SearchForWilds(panel :Array<Array<number>>)
 {
-    for(let i = 0; i < panel.length; i++)
+    for(let i = 0; i < panel[i].length; i++)
     {
-        for(let j = 1; j < panel[i].length - 1; j++)
+        for(let j = 1; j < panel.length-1; j++)
         {
-            if(panel[i][j] == 8)
+            if(panel[j][i] == 8)
             {
-                panel[0][j] = 8;
-                panel[1][j] = 8;
-                panel[2][j] = 8;
+                panel[j][0] = 8;
+                panel[j][1] = 8;
+                panel[j][2] = 8;
             }
         }
     }
@@ -32,15 +32,17 @@ export function CalculatePayout(panel : Array<Array<number>>, betCredit : number
     var lines = new Array<number[]>;
 
     //straight lines
-    lines.push(panel[0])
-    lines.push(panel[1])
-    lines.push(panel[2])
-
+    lines.push([panel[0][0], panel[1][0], panel[2][0], panel[3][0], panel[4][0]])
+    lines.push([panel[0][1], panel[1][1], panel[2][1], panel[3][1], panel[4][1]])
+    lines.push([panel[0][2], panel[1][2], panel[2][2], panel[3][2], panel[4][2]])
+    
     //triangle lines
 
-    lines.push([panel[0][0], panel[1][1], panel[2][2], panel[1][3], panel[0][4]]);
-    lines.push([panel[2][0], panel[1][1], panel[0][2], panel[1][3], panel[2][4]]);
+    lines.push([panel[0][0], panel[1][1], panel[2][2], panel[3][1], panel[4][0]]);
+    lines.push([panel[0][2], panel[1][1], panel[2][0], panel[3][1], panel[4][2]]);
     
+
+
     
     let line1  = CalculateLine(lines[0], "Line 1", betCredit)
     let line2  = CalculateLine(lines[1], "Line 2", betCredit)
@@ -57,51 +59,15 @@ export function CalculatePayout(panel : Array<Array<number>>, betCredit : number
 
 
 function CalculateLine(line : Array<number>, lineNumber : string, betCredit : number){
-    var symbolID : number = 0;
-
-    switch (line[0])
-    {
-        case 1 :
-            symbolID = SlotSymbols[0].id;
-            break;
-        case 2 :
-            symbolID = SlotSymbols[1].id;
-            break;
-        case 3 :
-            symbolID = SlotSymbols[2].id;
-            break;
-        case 4 :
-            symbolID = SlotSymbols[3].id;
-            break;
-        case 5 :
-            symbolID = SlotSymbols[4].id;
-            break;
-        case 6 :
-            symbolID = SlotSymbols[5].id;
-            break;
-        case 7 :
-            symbolID = SlotSymbols[6].id;
-            break;
-        default:
-            break;
-    }
-
     
-    let timesShown : number = 0;
-    for(let i = 0; i < line.length; i++)
-    {
-        
-        if(line[i] == symbolID || line[i] == 8)
-        {
-            timesShown++;
-        }
-        else{
-            break;
-        }
-    }
+
+    const symbolID : number = SelectSymbolID(line);
+
+    let timesShown : number = TimesShown(line, symbolID);
+   
 
     let payout : number = 0;
-    if(timesShown > 2)
+    if(timesShown >= 2)
     {
        payout = CalculateSymbolXPayout(symbolID, timesShown);
        payout = payout * betCredit;
@@ -118,13 +84,58 @@ type Payouts = {
 function CalculateSymbolXPayout(symbolID : number, timesShown : number)
 {
     const payoutTable : Payouts = {
-        1: { 3: 4, 4: 10, 5: 50 }, // Watermelon
-        2: { 3: 1, 4: 3, 5: 10 },  // Cherry
-        3: { 3: 1, 4: 3, 5: 10 },   // Lime
-        4: { 3: 1, 4: 3, 5: 10}, // Plum
-        5: { 3: 4, 4: 10, 5: 50}, // Grape
-        6: { 3: 1, 4: 3, 5: 10}, // Oranges
-        7: {3: 5, 4: 20, 5: 300}, // Seven
+        1: {2: 0, 3: 4, 4: 10, 5: 50 }, // Watermelon
+        2: {2: 0, 3: 1, 4: 3, 5: 10 },  // Cherry
+        3: {2: 0, 3: 1, 4: 3, 5: 10 },   // Lime
+        4: {2: 0, 3: 1, 4: 3, 5: 10}, // Plum
+        5: {2: 0, 3: 4, 4: 10, 5: 50}, // Grape
+        6: {2: 0, 3: 1, 4: 3, 5: 10}, // Oranges
+        7: {2: 2,3: 5, 4: 20, 5: 300}, // Seven
     };
     return payoutTable[symbolID][timesShown];
+}
+
+
+function SelectSymbolID(line : Array<number>)
+{
+
+    switch (line[0])
+    {
+        case 1 :
+            return SlotSymbols[0].id;
+        case 2 :
+            return SlotSymbols[1].id;
+        case 3 :
+            return SlotSymbols[2].id;
+        case 4 :
+            return SlotSymbols[3].id;
+        case 5 :
+            return SlotSymbols[4].id;
+        case 6 :
+            return SlotSymbols[5].id;
+        case 7 :
+            return SlotSymbols[6].id;
+        default:
+            break;
+    }
+
+    
+    return 0;
+}
+
+function TimesShown(line : Array<number>, symbolID : number)
+{
+    let timesShown = 0;
+    for(let i = 0; i < line.length; i++)
+    {
+        
+        if(line[i] == symbolID || line[i] == 8)
+        {
+            timesShown++;
+        }
+        else{
+            break;
+        }
+    }
+    return timesShown;
 }

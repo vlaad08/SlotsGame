@@ -25,22 +25,16 @@ const SlotSymbols = [
 
 
 const Slots = () => {
-    const initialSymbols = Array.from({ length: 3 }, (_, rowIndex) => 
-    Array.from({ length: 5 }, (_, columnIndex) => GenerateRandomNumber(columnIndex))
+    const initialSymbols = Array.from({ length: 5 }, (_, columnIndex) => 
+    Array.from({ length: 3 }, (_, rowIndex) => GenerateRandomNumber(columnIndex))
     );
     
-
     const [symbolPlots, setSymbolPlots] = useState(initialSymbols);
-
     const [betCredit, setBetCredit] = useState(3);
-
     const [linesPayout, setLinesPayout] = useState("");
-
     const [disabled, setDisabled] = useState(false);
-
     const [lastWin, setLastWin] = useState(0);
     const [balance, setBalance] = useState(1000);
-
     const [roll, setRollAnimation] = useState("no-roll");
 
     async function GeneratePanel() {
@@ -56,7 +50,7 @@ const Slots = () => {
         setSymbolPlots(newPanelAfterWilds);
         await delay(1);
         setRollAnimation("no-roll")
-        let lines = CalculatePayout(newPanelAfterWilds, betCredit);
+        let lines = CalculatePayout(newPanelAfterWilds, betCredit); 
         
         if(lines.length == 0)
         {
@@ -82,10 +76,11 @@ const Slots = () => {
     {
         let i : number = 0;
         let newPanel : number[][] = new Array;
+
         while (i != 5)
         {
-            newPanel = Array.from({ length: 3 }, (_, rowIndex) => 
-            Array.from({ length: 5 }, (_, columnIndex) => GenerateRandomNumber(columnIndex))
+            newPanel = Array.from({ length: 5 }, (_, columnIndex) => 
+            Array.from({ length: 3 }, (_, rowIndex) => GenerateRandomNumber(columnIndex))
             );
             setSymbolPlots(newPanel);
             i++;
@@ -94,9 +89,7 @@ const Slots = () => {
         return newPanel;
     }
     
-    function delay(seconds : number) {
-        return new Promise(resolve => setTimeout(resolve, seconds * 1000));
-    }
+   
     
     
     function GenerateRandomNumber(columnIndex : number) {
@@ -116,39 +109,43 @@ const Slots = () => {
         <div className="content">
             <div className="mainPanel">
             {symbolPlots.map((column, columnIndex) => (
-                <div key={columnIndex} className="row">
+                <div key={columnIndex} className={'column ' + roll}>
                     {column.map((symbolIndex, rowIndex) => {
                         const symbol = SlotSymbols.find(s => s.id === symbolIndex)?.image;
-                        return <div key={`${columnIndex}-${rowIndex}`} className={'symbol'}><img src={symbol} className={roll} alt="Slot Symbol"/></div>;
+                        return <div key={`${columnIndex}-${rowIndex}`} className={'symbol'}><img src={symbol} alt="Slot Symbol"/></div>;
                     })}
                 </div>
-            ))}
-            
+            ))}                    
+            </div>
             <div className="creditButtonsContainer">
-                <button className="creditButton" onClick={() => setBetCredit(1)}>1 credit</button>
-                <button className="creditButton" onClick={() => setBetCredit(2)}>2 credit</button>
-                <button className="creditButton" onClick={() => setBetCredit(3)}>3 credit</button>
-                <button className="creditButton" onClick={() => setBetCredit(5)}>5 credit</button>
-                <button className="creditButton" onClick={() => setBetCredit(8)}>8 credit</button>
-            </div>
-            <div className="playButtonContainer">
-                <div className="balanceContainer">
-                    <p className="banner">Balance</p>
-                    <p className="credit">{balance}</p>
+                    <button className="creditButton" onClick={() => setBetCredit(1)}>1 credit</button>
+                    <button className="creditButton" onClick={() => setBetCredit(2)}>2 credit</button>
+                    <button className="creditButton" onClick={() => setBetCredit(3)}>3 credit</button>
+                    <button className="creditButton" onClick={() => setBetCredit(5)}>5 credit</button>
+                    <button className="creditButton" onClick={() => setBetCredit(8)}>8 credit</button>
                 </div>
-                <button className="playButton" onClick={() => GeneratePanel()} disabled={disabled}>Play</button>
-                <div className="lastWinContainer">
-                    <p className="banner">Last Win</p>
-                    <p className="credit">{lastWin}</p>
+                <div className="playButtonContainer">
+                    <div className="balanceContainer">
+                        <p className="banner">Balance</p>
+                        <p className="credit">{balance}</p>
+                    </div>
+                    <button className="playButton" onClick={() => GeneratePanel()} disabled={disabled}>Play</button>
+                    <div className="lastWinContainer">
+                        <p className="banner">Last Win</p>
+                        <p className="credit">{lastWin}</p>
+                    </div>
                 </div>
+            <div>
+                <p>{linesPayout}</p>
             </div>
-                
-        </div>
-        <div>
-            <p>{linesPayout}</p>
-        </div>
         </div>
     );
 };
 
 export default Slots;
+
+
+
+function delay(seconds : number) {
+    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+}
