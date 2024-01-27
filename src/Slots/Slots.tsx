@@ -25,6 +25,8 @@ const SlotSymbols = [
 
 
 const Slots = () => {
+  
+    
     const initialSymbols = Array.from({ length: 5 }, (_, columnIndex) => 
     Array.from({ length: 3 }, (_, rowIndex) => GenerateRandomNumber(columnIndex))
     );
@@ -38,6 +40,10 @@ const Slots = () => {
     const [roll, setRollAnimation] = useState("no-roll");
 
     async function GeneratePanel() {
+       
+       
+        
+
         setDisabled(true);
         setRollAnimation("roll");
         setBalance(balance - betCredit);
@@ -92,17 +98,17 @@ const Slots = () => {
    
     
     
-    function GenerateRandomNumber(columnIndex : number) {
-
+    function GenerateRandomNumber(columnIndex: number) {
         if (columnIndex === 0 || columnIndex === 4) {
-
             return Math.floor(Math.random() * 7) + 1;
-        } else {
-            
-            
-            return Math.floor(Math.random() * 8) + 1;
+        }
+        else {
+            let x = Math.floor(Math.random() * 8) + 1;
+    
+            return x;
         }
     }
+    
 
     
     return (
