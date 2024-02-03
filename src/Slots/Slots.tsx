@@ -24,7 +24,7 @@ const SlotSymbols = [
 
 
 
-const Slots = () => {
+const Slots : React.FC<{balanceParam : number}> = ({balanceParam}) => {
   
     
     const initialSymbols = Array.from({ length: 5 }, (_, columnIndex) => 
@@ -36,7 +36,7 @@ const Slots = () => {
     const [linesPayout, setLinesPayout] = useState("");
     const [disabled, setDisabled] = useState(false);
     const [lastWin, setLastWin] = useState(0);
-    const [balance, setBalance] = useState(1000);
+    const [balance, setBalance] = useState(balanceParam);
     const [roll, setRollAnimation] = useState("no-roll");
 
     async function GeneratePanel() {
