@@ -61,11 +61,17 @@ function GenerateCardColor(red_probability : number, black_probability : number)
 
 const RedBlack : React.FC<RedBlackInterface> = ({gambleAmount, visible}) => {
 
+    const [color, setColor] = useState();
 
-
-    return ( 
-        <div className="content">
-
-        </div>
+    if(visible)
+    {
+        return (
+            <div>
+                
+            </div>
+        )
+    }
+    return (
+        <div></div>
     )
 }
