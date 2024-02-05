@@ -9,7 +9,10 @@ import grapes from "./SymbolImage/grapes.png";
 import oranges from "./SymbolImage/orange.png";
 import seven from "./SymbolImage/seven.png";
 import wild from "./SymbolImage/wild.png";
+import { RedBlack } from "../Gamble/RedBlack";
 
+
+var red_black = new RedBlack();
 
 const SlotSymbols = [
     {id: 1, symbol: "watermelon", image : watermelon},
@@ -23,7 +26,6 @@ const SlotSymbols = [
 ];
 
 
-
 const Slots : React.FC<{balanceParam : number}> = ({balanceParam}) => {
   
     
@@ -33,17 +35,14 @@ const Slots : React.FC<{balanceParam : number}> = ({balanceParam}) => {
     
     const [symbolPlots, setSymbolPlots] = useState(initialSymbols);
     const [betCredit, setBetCredit] = useState(3);
-    const [linesPayout, setLinesPayout] = useState("");
     const [disabled, setDisabled] = useState(false);
     const [lastWin, setLastWin] = useState(0);
     const [balance, setBalance] = useState(balanceParam);
     const [roll, setRollAnimation] = useState("no-roll");
+    const [gambleWin, setGambleWin] = useState(false);
+
 
     async function GeneratePanel() {
-       
-       
-        
-
         setDisabled(true);
         setRollAnimation("roll");
         setBalance(balance - betCredit);
@@ -60,7 +59,6 @@ const Slots : React.FC<{balanceParam : number}> = ({balanceParam}) => {
         
         if(lines.length == 0)
         {
-            setLinesPayout("");
             setLastWin(0);
         }
         else
@@ -69,13 +67,12 @@ const Slots : React.FC<{balanceParam : number}> = ({balanceParam}) => {
             lines.forEach(line => {
                 wonSum += line.payout;
             });
-            setBalance(balance + wonSum)
             setLastWin(wonSum);
-            ///setLinesPayout(text);
-            
         }
-        
         setDisabled(false);
+
+
+        // if the won sum is not added to the balance, then  if the player presses play again it gets added or if t
     }
 
     async function RollPanel()
@@ -96,8 +93,6 @@ const Slots : React.FC<{balanceParam : number}> = ({balanceParam}) => {
     }
     
    
-    
-    
     function GenerateRandomNumber(columnIndex: number) {
         if (columnIndex === 0 || columnIndex === 4) {
             return Math.floor(Math.random() * 7) + 1;
@@ -109,7 +104,55 @@ const Slots : React.FC<{balanceParam : number}> = ({balanceParam}) => {
         }
     }
     
+    const [color, setColor] = useState<string>();
+    const [selectedColor, setSelectedColor] = useState<string>();
+    const [gambleAttempts, setGambleAttempts] = useState(3);
 
+    async function checkGambleWin(sc : string, ac : string)
+    {
+        setSelectedColor(sc);
+        await delay(0.5);
+        setColor(ac);
+
+        await delay(1);
+        if(sc == ac)
+        {
+            setColor("");
+            setLastWin(lastWin * 2);
+        }
+        else
+        {
+            setColor("");
+            setLastWin(0);
+            setGambleWin(false);
+        }
+
+        setGambleAttempts(gambleAttempts - 1);
+        if(gambleAttempts == 0)
+        {
+            setBalance(balance + lastWin);
+            setGambleAttempts(3);
+            setGambleWin(false);
+        }
+    }
+
+    if(gambleWin)
+    {
+        return (
+            <div className="cardGameContent">
+                <p>Current color : {color}</p>
+                <p>You selected : {selectedColor}</p>
+                <p>Last Win : {lastWin} </p>
+                <p>Remaining attemps : {gambleAttempts}</p>
+                <button onClick={async () => {checkGambleWin("red", red_black.Gamble())}}>Red</button>
+                <button onClick={async () => {checkGambleWin("black", red_black.Gamble())}}>Black</button>
+                <button onClick={() => {setBalance(balance + lastWin); setGambleWin(false)}}>X</button>
+            </div>
+        )
+    }
+
+    
+    
     
     return (
         <div className="content">
@@ -124,25 +167,29 @@ const Slots : React.FC<{balanceParam : number}> = ({balanceParam}) => {
             ))}                    
             </div>
             <div className="creditButtonsContainer">
-                    <button className="creditButton" onClick={() => setBetCredit(1)}>1 credit</button>
-                    <button className="creditButton" onClick={() => setBetCredit(2)}>2 credit</button>
-                    <button className="creditButton" onClick={() => setBetCredit(3)}>3 credit</button>
-                    <button className="creditButton" onClick={() => setBetCredit(5)}>5 credit</button>
-                    <button className="creditButton" onClick={() => setBetCredit(8)}>8 credit</button>
+                <button className="creditButton" onClick={() => setBetCredit(1)}>1 credit</button>
+                <button className="creditButton" onClick={() => setBetCredit(2)}>2 credit</button>
+                <button className="creditButton" onClick={() => setBetCredit(3)}>3 credit</button>
+                <button className="creditButton" onClick={() => setBetCredit(5)}>5 credit</button>
+                <button className="creditButton" onClick={() => setBetCredit(8)}>8 credit</button>
+            </div>
+            <div className="playButtonContainer">
+                <div className="balanceContainer">
+                    <p className="banner">Balance</p>
+                    <p className="credit">{balance}</p>
                 </div>
-                <div className="playButtonContainer">
-                    <div className="balanceContainer">
-                        <p className="banner">Balance</p>
-                        <p className="credit">{balance}</p>
-                    </div>
-                    <button className="playButton" onClick={() => GeneratePanel()} disabled={disabled}>Play</button>
-                    <div className="lastWinContainer">
-                        <p className="banner">Last Win</p>
-                        <p className="credit">{lastWin}</p>
-                    </div>
+                {(lastWin == 0) ? (
+                <button className="playButton" onClick={() => GeneratePanel()} disabled={disabled}>Play</button>) :
+                (
+                <div>
+                    <button onClick={() => {setBalance(lastWin + balance); setLastWin(0)}}>No Gamble</button>
+                    <button className="cardGambleButton" onClick={() => setGambleWin(true)} >Gamble</button>
                 </div>
-            <div>
-                <p>{linesPayout}</p>
+                )}
+                <div className="lastWinContainer">
+                    <p className="banner">Last Win</p>
+                    <p className="credit">{lastWin}</p>
+                </div>
             </div>
         </div>
     );
