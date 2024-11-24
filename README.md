@@ -1,0 +1,1 @@
+# This project is not well taken care of, and I made it before I learned some "best practices" about ts and react. I'll try to update it, but I haven't touched it in a while, and I don't understand some of the stuff I wrote
