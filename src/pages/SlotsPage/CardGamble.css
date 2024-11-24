@@ -1,0 +1,42 @@
+.cardGameContent {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cardGameContent p {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.cardGameContent button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.buttonDiv button:hover {
+  background-color: #0056b3;
+}
+
+.buttonDiv button:last-child {
+  background-color: #dc3545;
+}
+
+.buttonDiv button:last-child:hover {
+  background-color: #c82333;
+}
+
+.buttonDiv {
+  display: flex;
+  justify-content: center;
+}

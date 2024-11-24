@@ -1,4 +1,4 @@
-import React from "react";
+
 
 const SlotSymbols = [
     {id: 1, symbol: "watermelon"},

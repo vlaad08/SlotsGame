@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
-import './App.css';
-import Slots from './Slots/Slots';
+import React, { useState } from "react";
+import "./App.css";
+import Slots from "./pages/SlotsPage/Slots";
+import { DepositForm } from "./pages/DepositPage/Deposit";
 
 function App() {
   const [initialLoad, setInitialLoad] = useState(true);
   const [balance, setBalance] = useState(0);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBalance(Number(event.target.value));
-  };
+  if (initialLoad) {
+    return (
+      <div className="Deposit">
+        <DepositForm
+          setBalance={setBalance}
+          onDeposit={() => setInitialLoad(false)}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="App">
-      {initialLoad ? (
-        <div>
-          <h1>Deposit first in order to play</h1>
-          <input type="number" onChange={handleInputChange} />
-          <button onClick={() => setInitialLoad(false)}>Deposit</button>
-        </div>
-      ) : (
-        <Slots balanceParam={balance}/>  
-      )}
+    <div className="Slots">
+      <Slots balanceParam={balance} />
     </div>
   );
 }
